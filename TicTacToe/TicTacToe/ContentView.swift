@@ -14,7 +14,6 @@ struct ContentView: View {
         NavigationView {
             ZStack{
                 LinearGradient(gradient: Gradient(colors: [Color.red, Color.blue]), startPoint: .top, endPoint: .bottom)
-                  
                     .ignoresSafeArea()
                 VStack {
                     Text("\(ticTacViewModel.isOnX ? "X" : "O") goes")
@@ -26,8 +25,6 @@ struct ContentView: View {
                                         .opacity(0.3))
                         .cornerRadius(8)
                         
-                    
-                    
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(),spacing: 15), count: 3), content: {
                         ForEach(0..<9,id:\.self){ index in
                             ZStack {
@@ -39,10 +36,6 @@ struct ContentView: View {
                                 
                             }
                             .cornerRadius(8)
-                            .onTapGesture {
-                                ticTacViewModel.choose(index : index)
-                                gameOver = ticTacViewModel.gameOver
-                            }
                             .frame(width: getWidth(), height: getWidth())
                             .rotation3DEffect(
                                 Angle(degrees: ticTacViewModel.moves[index] == "" ? 180 : 0),
@@ -51,15 +44,22 @@ struct ContentView: View {
                                 anchorZ: 0.0,
                                 perspective: 0.0
                             )
+//                            .animation(.easeIn)
+                            .onTapGesture {
+                                withAnimation(.easeIn){
+                                ticTacViewModel.choose(index : index)
+                                gameOver = ticTacViewModel.gameOver
+                                    
+                                }
+                            }
                         }
                     })
                     .padding(15)
-                    .animation(.easeIn)
                     
                     Button(action: {
-                        withAnimation(.spring()){
+                        withAnimation(.easeIn) {
                             ticTacViewModel.reset()
-                    }
+                        }
                     }, label: {
                         Text("Reset")
                             .foregroundColor(.white)
@@ -80,22 +80,15 @@ struct ContentView: View {
                 }))
             })
             .navigationTitle("Tic Tac Toe")
-            
-            
         }
-       
     }
     
     func getWidth()-> CGFloat{
         let width = UIScreen.main.bounds.width - (30 + 30)
         return width / 3
     }
-    
-    
-    
-   
+           
 }
-
 
 
 struct ContentView_Previews: PreviewProvider {
